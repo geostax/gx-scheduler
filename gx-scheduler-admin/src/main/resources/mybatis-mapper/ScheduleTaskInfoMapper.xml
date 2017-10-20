@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ScheduleTaskInfoMapper">
+	
+	<resultMap id="ScheduleTaskInfo" type="com.geostax.scheduler.admin.model.ScheduleTaskInfo" >
+		<result column="id" property="id" />
+	
+		<result column="task_group" property="taskGroup" />
+	    <result column="task_cron" property="taskCron" />
+	    <result column="task_desc" property="taskDesc" />
+	    
+	    <result column="add_time" property="addTime" />
+	    <result column="update_time" property="updateTime" />
+	    
+	    <result column="author" property="author" />
+	    <result column="alarm_email" property="alarmEmail" />
+
+		<result column="executor_route_strategy" property="executorRouteStrategy" />
+		<result column="executor_handler" property="executorHandler" />
+	    <result column="executor_param" property="executorParam" />
+		<result column="executor_block_strategy" property="executorBlockStrategy" />
+		<result column="executor_fail_strategy" property="executorFailStrategy" />
+
+		<result column="child_jobkey" property="childJobKey" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		t.id,
+		t.task_group,
+		t.task_cron,
+		t.task_desc,
+		t.add_time,
+		t.update_time,
+		t.author,
+		t.alarm_email,
+		t.executor_route_strategy,
+		t.executor_handler,
+		t.executor_param,
+		t.executor_block_strategy,
+		t.executor_fail_strategy,
+		t.child_jobkey
+	</sql>
+	
+	<select id="pageList" parameterType="java.util.HashMap" resultMap="ScheduleTaskInfo">
+		SELECT <include refid="Base_Column_List" />
+		FROM GX_SCHEDULER_QRTZ_TRIGGER_INFO AS t
+		<trim prefix="WHERE" prefixOverrides="AND | OR" >
+			<if test="taskGroup gt 0">
+				AND t.task_group = #{taskGroup}
+			</if>
+			<if test="executorHandler != null and executorHandler != ''">
+				AND t.executor_handler like CONCAT(CONCAT('%', #{executorHandler}), '%')
+			</if>
+		</trim>
+		ORDER BY id DESC
+		LIMIT #{offset}, #{pagesize}
+	</select>
+	
+	<select id="pageListCount" parameterType="java.util.HashMap" resultType="int">
+		SELECT count(1)
+		FROM GX_SCHEDULER_QRTZ_TRIGGER_INFO AS t
+		<trim prefix="WHERE" prefixOverrides="AND | OR" >
+			<if test="taskGroup gt 0">
+				AND t.task_group = #{taskGroup}
+			</if>
+			<if test="executorHandler != null and executorHandler != ''">
+				AND t.executor_handler like CONCAT(CONCAT('%', #{executorHandler}), '%')
+			</if>
+		</trim>
+	</select>
+
+	<insert id="save" parameterType="com.geostax.scheduler.admin.model.ScheduleTaskInfo" useGeneratedKeys="true" keyProperty="id" >
+		INSERT INTO GX_SCHEDULER_QRTZ_TRIGGER_INFO (
+			task_group,
+			task_cron,
+			task_desc,
+			add_time,
+			update_time,
+			author,
+			alarm_email,
+            executor_route_strategy,
+			executor_handler,
+			executor_param,
+			executor_block_strategy,
+			executor_fail_strategy,
+			child_jobkey
+		) VALUES (
+			#{taskGroup},
+			#{taskCron}, 
+			#{taskDesc},
+			NOW(),
+			NOW(),
+			#{author},
+			#{alarmEmail},
+			#{executorRouteStrategy},
+			#{executorHandler},
+			#{executorParam},
+			#{executorBlockStrategy},
+			#{executorFailStrategy},
+			#{childJobKey}
+		);
+		<!--<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+			SELECT LAST_INSERT_ID()
+			/*SELECT @@IDENTITY AS id*/
+		</selectKey>-->
+	</insert>
+
+	<select id="loadById" parameterType="java.util.HashMap" resultMap="ScheduleTaskInfo">
+		SELECT <include refid="Base_Column_List" />
+		FROM GX_SCHEDULER_QRTZ_TRIGGER_INFO AS t
+		WHERE t.id = #{id}
+	</select>
+	
+	<update id="update" parameterType="com.geostax.scheduler.admin.model.ScheduleTaskInfo" >
+		UPDATE GX_SCHEDULER_QRTZ_TRIGGER_INFO
+		SET 
+			task_cron = #{taskCron},
+			task_desc = #{taskDesc},
+			update_time = NOW(),
+			author = #{author},
+			alarm_email = #{alarmEmail},
+			executor_route_strategy = #{executorRouteStrategy},
+			executor_handler = #{executorHandler},
+			executor_param = #{executorParam},
+			executor_block_strategy = #{executorBlockStrategy},
+			executor_fail_strategy = #{executorFailStrategy},
+			child_jobkey = #{childJobKey}
+		WHERE id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="java.util.HashMap">
+		DELETE
+		FROM GX_SCHEDULER_QRTZ_TRIGGER_INFO
+		WHERE id = #{id}
+	</delete>
+
+	<select id="getJobsByGroup" parameterType="java.util.HashMap" resultMap="ScheduleTaskInfo">
+		SELECT <include refid="Base_Column_List" />
+		FROM GX_SCHEDULER_QRTZ_TRIGGER_INFO AS t
+		WHERE t.task_group = #{taskGroup}
+	</select>
+
+	<select id="findAllCount" resultType="int">
+		SELECT count(1)
+		FROM GX_SCHEDULER_QRTZ_TRIGGER_INFO
+	</select>
+
+</mapper>
