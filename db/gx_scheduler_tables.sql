@@ -1,3 +1,5 @@
+# Quartz Scheduler 系统表
+
 CREATE TABLE GX_SCHEDULER_QRTZ_JOB_DETAILS
   (
     SCHED_NAME VARCHAR(120) NOT NULL,
@@ -143,6 +145,58 @@ CREATE TABLE GX_SCHEDULER_QRTZ_LOCKS
 );
 
 
+# 业务表
+
+CREATE TABLE `GX_SCHEDULER_QRTZ_TRIGGER_INFO` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `task_group` int(11) NOT NULL COMMENT '执行器主键ID',
+  `task_cron` varchar(128) NOT NULL COMMENT '任务执行CRON',
+  `task_desc` varchar(255) NOT NULL,
+  `add_time` datetime DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
+  `author` varchar(64) DEFAULT NULL COMMENT '作者',
+  `alarm_email` varchar(255) DEFAULT NULL COMMENT '报警邮件',
+  `executor_route_strategy` varchar(50) DEFAULT NULL COMMENT '执行器路由策略',
+  `executor_handler` varchar(255) DEFAULT NULL COMMENT '执行器任务handler',
+  `executor_param` varchar(255) DEFAULT NULL COMMENT '执行器任务参数',
+  `executor_block_strategy` varchar(50) DEFAULT NULL COMMENT '阻塞处理策略',
+  `executor_fail_strategy` varchar(50) DEFAULT NULL COMMENT '失败处理策略',
+  `child_jobkey` varchar(255) DEFAULT NULL COMMENT '子任务Key',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `GX_SCHEDULER_QRTZ_TRIGGER_LOG` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `task_group` int(11) NOT NULL COMMENT '执行器主键ID',
+  `task_id` int(11) NOT NULL COMMENT '任务，主键ID',
+  `executor_address` varchar(255) DEFAULT NULL COMMENT '执行器地址，本次执行的地址',
+  `executor_handler` varchar(255) DEFAULT NULL COMMENT '执行器任务handler',
+  `executor_param` varchar(255) DEFAULT NULL COMMENT 'executor_param',
+  `trigger_time` datetime DEFAULT NULL COMMENT '调度-时间',
+  `trigger_code` varchar(255) DEFAULT NULL COMMENT '调度-结果',
+  `trigger_msg` varchar(2048) DEFAULT NULL COMMENT '调度-日志',
+  `handle_time` datetime DEFAULT NULL COMMENT '执行-时间',
+  `handle_code` varchar(255) DEFAULT NULL COMMENT '执行-状态',
+  `handle_msg` varchar(2048) DEFAULT NULL COMMENT '执行-日志',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `GX_SCHEDULER_QRTZ_TRIGGER_LOGGLUE` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `task_id` int(11) NOT NULL COMMENT '任务，主键ID',
+  `add_time` timestamp NULL DEFAULT NULL,
+  `update_time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE GX_SCHEDULER_QRTZ_TRIGGER_REGISTRY (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `registry_group` varchar(255) NOT NULL,
+  `registry_key` varchar(255) NOT NULL,
+  `registry_value` varchar(255) NOT NULL,
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `GX_SCHEDULER_QRTZ_TRIGGER_GROUP` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -154,6 +208,7 @@ CREATE TABLE `GX_SCHEDULER_QRTZ_TRIGGER_GROUP` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `GX_SCHEDULER_QRTZ_TRIGGER_GROUP` ( `app_name`, `title`, `order`, `address_type`, `address_list`) values ( 'gx-scheduler-executor-example', '示例执行器', '1', '0', null);
+INSERT INTO `GX_SCHEDULER_QRTZ_TRIGGER_GROUP` ( `app_name`, `title`, `order`, `address_type`, `address_list`) values ( 'gx-scheduler-task-demo', '示例执行器', '1', '0', null);
 
+commit;
 
