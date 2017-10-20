@@ -7,9 +7,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * annotation for job handler
+ * annotation for task handler
+ * A task handler can be triggered by Quartz scheduler to achieve a user-specified task
  * 
- * @author 2016-5-17 21:06:49
+ * @author Phil XIAO 2016-5-17 21:06:49
  */
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)

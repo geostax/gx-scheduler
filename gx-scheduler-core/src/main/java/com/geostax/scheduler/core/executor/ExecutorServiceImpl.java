@@ -46,7 +46,7 @@ public class ExecutorServiceImpl implements IExecutorService {
 			return ReturnT.SUCCESS;
 		}
 
-		return new ReturnT<String>(ReturnT.SUCCESS_CODE, "job thread aleady killed.");
+		return new ReturnT<String>(ReturnT.SUCCESS_CODE, "Task thread aleady killed.");
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public class ExecutorServiceImpl implements IExecutorService {
 		// valid old TaskThread
 		if (taskThread != null && taskHandler != null && taskThread.getHandler() != taskHandler) {
 			// change handler, need kill old thread
-			removeOldReason = "更新JobHandler或更换任务模式,终止旧任务线程";
+			removeOldReason = "更新TaskHandler或更换任务模式,终止旧任务线程";
 
 			taskThread = null;
 			taskHandler = null;
@@ -77,7 +77,7 @@ public class ExecutorServiceImpl implements IExecutorService {
 			taskHandler = ScheduleTaskExecutor.loadTaskHandler(triggerParam.getExecutorHandler());
 			if (taskHandler == null) {
 				return new ReturnT<String>(ReturnT.FAIL_CODE,
-						"job handler [" + triggerParam.getExecutorHandler() + "] not found.");
+						"task handler [" + triggerParam.getExecutorHandler() + "] not found.");
 			}
 		}
 
